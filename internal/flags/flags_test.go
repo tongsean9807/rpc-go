@@ -98,12 +98,12 @@ func (c MockPTHICommands) GetLANInterfaceSettings(useWireless bool) (LANInterfac
 		return pthi.GetLANInterfaceSettingsResponse{}, nil
 	} else {
 		return pthi.GetLANInterfaceSettingsResponse{
-			Enabled:     1,
-			Ipv4Address: 0,
-			DhcpEnabled: 1,
-			DhcpIpMode:  2,
-			LinkStatus:  1,
-			MacAddress:  [6]uint8{0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F},
+			Enabled:        1,
+			AmtIpv4Address: 0,
+			DhcpEnabled:    1,
+			DhcpIpMode:     2,
+			LinkStatus:     1,
+			MacAddress:     [6]uint8{0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F},
 		}, nil
 	}
 }

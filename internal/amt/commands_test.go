@@ -119,21 +119,21 @@ func (c MockPTHICommands) GetRemoteAccessConnectionStatus() (RAStatus pthi.GetRe
 func (c MockPTHICommands) GetLANInterfaceSettings(useWireless bool) (LANInterface pthi.GetLANInterfaceSettingsResponse, err error) {
 	if useWireless {
 		return pthi.GetLANInterfaceSettingsResponse{
-			Enabled:     0,
-			Ipv4Address: 0,
-			DhcpEnabled: 1,
-			DhcpIpMode:  0,
-			LinkStatus:  0,
-			MacAddress:  [6]uint8{0, 0, 0, 0, 0, 0},
+			Enabled:        0,
+			AmtIpv4Address: 0,
+			DhcpEnabled:    1,
+			DhcpIpMode:     0,
+			LinkStatus:     0,
+			MacAddress:     [6]uint8{0, 0, 0, 0, 0, 0},
 		}, nil
 	} else {
 		return pthi.GetLANInterfaceSettingsResponse{
-			Enabled:     1,
-			Ipv4Address: 0,
-			DhcpEnabled: 1,
-			DhcpIpMode:  2,
-			LinkStatus:  1,
-			MacAddress:  [6]uint8{7, 7, 7, 7, 7, 7},
+			Enabled:        1,
+			AmtIpv4Address: 0,
+			DhcpEnabled:    1,
+			DhcpIpMode:     2,
+			LinkStatus:     1,
+			MacAddress:     [6]uint8{7, 7, 7, 7, 7, 7},
 		}, nil
 	}
 }
@@ -283,7 +283,7 @@ func TestGetLANInterfaceSettingsTrue(t *testing.T) {
 	assert.Equal(t, false, result.IsEnabled)
 	assert.Equal(t, "down", result.LinkStatus)
 	assert.Equal(t, "passive", result.DHCPMode)
-	assert.Equal(t, "0.0.0.0", result.IPAddress)
+	assert.Equal(t, "0.0.0.0", result.AmtIPAddress)
 	assert.Equal(t, "00:00:00:00:00:00", result.MACAddress)
 }
 
@@ -293,7 +293,7 @@ func TestGetLANInterfaceSettingsFalse(t *testing.T) {
 	assert.Equal(t, true, result.IsEnabled)
 	assert.Equal(t, "up", result.LinkStatus)
 	assert.Equal(t, "passive", result.DHCPMode)
-	assert.Equal(t, "0.0.0.0", result.IPAddress)
+	assert.Equal(t, "0.0.0.0", result.AmtIPAddress)
 	assert.Equal(t, "07:07:07:07:07:07", result.MACAddress)
 }
 

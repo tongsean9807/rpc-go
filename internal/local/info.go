@@ -165,7 +165,7 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 			service.PrintOutput("DHCP Enabled 		: " + strconv.FormatBool(wired.DHCPEnabled))
 			service.PrintOutput("DHCP Mode    		: " + wired.DHCPMode)
 			service.PrintOutput("Link Status  		: " + wired.LinkStatus)
-			service.PrintOutput("IP Address   		: " + wired.IPAddress)
+			service.PrintOutput("IP Address   		: " + wired.AmtIPAddress)
 			service.PrintOutput("MAC Address  		: " + wired.MACAddress)
 		}
 
@@ -179,7 +179,8 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		service.PrintOutput("DHCP Enabled 		: " + strconv.FormatBool(wireless.DHCPEnabled))
 		service.PrintOutput("DHCP Mode    		: " + wireless.DHCPMode)
 		service.PrintOutput("Link Status  		: " + wireless.LinkStatus)
-		service.PrintOutput("IP Address   		: " + wireless.IPAddress)
+		service.PrintOutput("AMT IP Address   	: " + wireless.AmtIPAddress)
+		service.PrintOutput("OS  IP Address		: " + wireless.OsIPAdress)
 		service.PrintOutput("MAC Address  		: " + wireless.MACAddress)
 
 	}

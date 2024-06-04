@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"net"
 	"rpc/pkg/heci"
 )
 
@@ -37,6 +38,75 @@ func NewCommand() Command {
 	return Command{
 		Heci: heci.NewDriver(),
 	}
+}
+
+func GetOSIPAddress(results []uint8) (uint32, error) {
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return 0, errors.New("fail")
+	}
+
+	// end := len(results) - 1
+
+	// Iterate backwards to find the last non-zero element
+	// for end > 0 && results[end-1] == 0 {
+	// 	end--
+	// }
+
+	// macAddr := results[end-6 : end]
+
+	zero_bytes := []byte{0, 0, 0, 0, 0, 0, 0}
+
+	if bytes.Equal([]byte(results), zero_bytes) {
+		return 0, nil
+	}
+
+	for _, iface := range interfaces {
+		if iface.Flags&net.FlagUp == 0 {
+			continue // interface down
+		}
+		if iface.Flags&net.FlagLoopback != 0 {
+			continue // loopback interface
+		}
+
+		hwaddr := iface.HardwareAddr
+
+		if bytes.Equal(hwaddr, []byte(results)) {
+			addrs, err := iface.Addrs()
+			if err != nil {
+				return 0, errors.New("fail")
+			}
+
+			for _, addr := range addrs {
+				var ip net.IP
+
+				switch v := addr.(type) {
+				case *net.IPNet:
+					ip = v.IP
+				case *net.IPAddr:
+					ip = v.IP
+				}
+
+				// Check if the IP address is not nil and is an IPv4 address
+				if ip == nil || ip.IsLoopback() {
+					continue
+				}
+				ip = ip.To4()
+				if ip == nil {
+					continue // not an ipv4 address
+				}
+
+				ip_in_bytes := []byte(ip)
+				ip_in_bytes_reverse := make([]byte, len(ip_in_bytes))
+				for i, byte_value := range ip_in_bytes {
+					ip_in_bytes_reverse[len(ip_in_bytes)-i-1] = byte_value
+				}
+				//return ip_in_bytes_reverse, nil
+				return binary.BigEndian.Uint32(ip_in_bytes), nil
+			}
+		}
+	}
+	return 1020, nil
 }
 
 func (pthi Command) Open(useLME bool) error {
@@ -377,16 +447,29 @@ func (pthi Command) GetLANInterfaceSettings(useWireless bool) (LANInterface GetL
 		return emptySettings, err
 	}
 	buf2 := bytes.NewBuffer(result)
+
+	copiedBuf := new(bytes.Buffer)
+	copiedBuf.Write(buf2.Bytes())
+
 	response := GetLANInterfaceSettingsResponse{
 		Header: readHeaderResponse(buf2),
 	}
 
+	//osAddr, _ := GetOSIPAddress(copiedBuf.Bytes())
+
 	binary.Read(buf2, binary.LittleEndian, &response.Enabled)
-	binary.Read(buf2, binary.LittleEndian, &response.Ipv4Address)
+	binary.Read(buf2, binary.LittleEndian, &response.AmtIpv4Address)
+
+	// buf3 := bytes.NewBuffer(osAddr)
+	// buf3.Write(buf2.Bytes())
+
+	// binary.Read(buf2, binary.LittleEndian, &response.OsIpv4Address)
 	binary.Read(buf2, binary.LittleEndian, &response.DhcpEnabled)
 	binary.Read(buf2, binary.LittleEndian, &response.DhcpIpMode)
 	binary.Read(buf2, binary.LittleEndian, &response.LinkStatus)
 	binary.Read(buf2, binary.LittleEndian, &response.MacAddress)
+
+	response.OsIpv4Address, _ = GetOSIPAddress(response.MacAddress[:])
 
 	return response, nil
 }
