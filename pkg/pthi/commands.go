@@ -97,16 +97,16 @@ func GetOSIPAddress(results []uint8) (uint32, error) {
 				}
 
 				ip_in_bytes := []byte(ip)
-				ip_in_bytes_reverse := make([]byte, len(ip_in_bytes))
-				for i, byte_value := range ip_in_bytes {
-					ip_in_bytes_reverse[len(ip_in_bytes)-i-1] = byte_value
-				}
+				// ip_in_bytes_reverse := make([]byte, len(ip_in_bytes))
+				// for i, byte_value := range ip_in_bytes {
+				// 	ip_in_bytes_reverse[len(ip_in_bytes)-i-1] = byte_value
+				// }
 				//return ip_in_bytes_reverse, nil
 				return binary.BigEndian.Uint32(ip_in_bytes), nil
 			}
 		}
 	}
-	return 1020, nil
+	return 0, nil
 }
 
 func (pthi Command) Open(useLME bool) error {
