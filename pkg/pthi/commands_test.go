@@ -272,7 +272,7 @@ func TestGetLANInterfaceSettings(t *testing.T) {
 		DhcpIpMode:     0,
 		LinkStatus:     1,
 		MacAddress:     [6]uint8{1, 2, 3, 4, 5, 6},
-		OsIpv4Address:  1020,
+		OsIpv4Address:  0,
 	}
 	var bin_buf bytes.Buffer
 	binary.Write(&bin_buf, binary.LittleEndian, prepareMessage)
@@ -283,7 +283,7 @@ func TestGetLANInterfaceSettings(t *testing.T) {
 	assert.NotEmpty(t, result)
 	assert.Equal(t, int(result.Enabled), 1)
 	assert.Equal(t, int(result.AmtIpv4Address), 1020)
-	assert.Equal(t, int(result.OsIpv4Address), 1020)
+	assert.Equal(t, int(result.OsIpv4Address), 0)
 	assert.Equal(t, int(result.DhcpEnabled), 0)
 	assert.Equal(t, int(result.DhcpIpMode), 0)
 	assert.Equal(t, int(result.LinkStatus), 1)

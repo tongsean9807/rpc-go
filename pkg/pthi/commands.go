@@ -46,15 +46,6 @@ func GetOSIPAddress(results []uint8) (uint32, error) {
 		return 0, errors.New("fail")
 	}
 
-	// end := len(results) - 1
-
-	// Iterate backwards to find the last non-zero element
-	// for end > 0 && results[end-1] == 0 {
-	// 	end--
-	// }
-
-	// macAddr := results[end-6 : end]
-
 	zero_bytes := []byte{0, 0, 0, 0, 0, 0, 0}
 
 	if bytes.Equal([]byte(results), zero_bytes) {
@@ -97,11 +88,6 @@ func GetOSIPAddress(results []uint8) (uint32, error) {
 				}
 
 				ip_in_bytes := []byte(ip)
-				// ip_in_bytes_reverse := make([]byte, len(ip_in_bytes))
-				// for i, byte_value := range ip_in_bytes {
-				// 	ip_in_bytes_reverse[len(ip_in_bytes)-i-1] = byte_value
-				// }
-				//return ip_in_bytes_reverse, nil
 				return binary.BigEndian.Uint32(ip_in_bytes), nil
 			}
 		}
@@ -455,21 +441,17 @@ func (pthi Command) GetLANInterfaceSettings(useWireless bool) (LANInterface GetL
 		Header: readHeaderResponse(buf2),
 	}
 
-	//osAddr, _ := GetOSIPAddress(copiedBuf.Bytes())
-
 	binary.Read(buf2, binary.LittleEndian, &response.Enabled)
 	binary.Read(buf2, binary.LittleEndian, &response.AmtIpv4Address)
-
-	// buf3 := bytes.NewBuffer(osAddr)
-	// buf3.Write(buf2.Bytes())
-
-	// binary.Read(buf2, binary.LittleEndian, &response.OsIpv4Address)
 	binary.Read(buf2, binary.LittleEndian, &response.DhcpEnabled)
 	binary.Read(buf2, binary.LittleEndian, &response.DhcpIpMode)
 	binary.Read(buf2, binary.LittleEndian, &response.LinkStatus)
 	binary.Read(buf2, binary.LittleEndian, &response.MacAddress)
 
-	response.OsIpv4Address, _ = GetOSIPAddress(response.MacAddress[:])
+	response.OsIpv4Address, err = GetOSIPAddress(response.MacAddress[:])
+	if err != nil {
+		return response, err
+	}
 
 	return response, nil
 }
