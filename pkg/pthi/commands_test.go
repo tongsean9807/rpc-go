@@ -208,7 +208,7 @@ func TestEnumerateHashHandles(t *testing.T) {
 	assert.Equal(t, uint32(1), result.Length)
 }
 
-func TestGetCertificateHashes(t *testing.T) { // Needs more work
+func TestGetCertificateHashes(t *testing.T) { // Needs more work new
 	numBytes = 16
 	prepareMessage2 := GetCertHashEntryResponse{
 		Header: ResponseMessageHeader{Status: 1},
