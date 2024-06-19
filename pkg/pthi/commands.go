@@ -377,7 +377,6 @@ func (pthi Command) GetLANInterfaceSettings(useWireless bool) (LANInterface GetL
 		return emptySettings, err
 	}
 	buf2 := bytes.NewBuffer(result)
-
 	response := GetLANInterfaceSettingsResponse{
 		Header: readHeaderResponse(buf2),
 	}
