@@ -47,9 +47,6 @@ func GetOSIPAddress(mac_addr string) (string, error) {
 	}
 
 	for _, iface := range interfaces {
-		if iface.Flags&net.FlagUp == 0 {
-			continue // interface down
-		}
 		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
 			continue // interface down || loopback interface
 		}
