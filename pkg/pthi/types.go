@@ -218,14 +218,13 @@ type GetLANInterfaceSettingsRequest struct {
 	InterfaceIndex uint32
 }
 type GetLANInterfaceSettingsResponse struct {
-	Header        ResponseMessageHeader
-	Enabled       uint32
-	Ipv4Address   uint32
-	DhcpEnabled   uint32
-	DhcpIpMode    uint8
-	LinkStatus    uint8
-	MacAddress    [6]uint8
-	OsIpv4Address uint32
+	Header      ResponseMessageHeader
+	Enabled     uint32
+	Ipv4Address uint32
+	DhcpEnabled uint32
+	DhcpIpMode  uint8
+	LinkStatus  uint8
+	MacAddress  [6]uint8
 }
 
 type AMTHashHandles struct {

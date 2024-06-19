@@ -367,18 +367,12 @@ func (amt AMTCommand) GetLANInterfaceSettings(useWireless bool) (InterfaceSettin
 		settings.DHCPMode = "active"
 	}
 
-	amt_part1 := result.Ipv4Address >> 24 & 0xff
-	amt_part2 := result.Ipv4Address >> 16 & 0xff
-	amt_part3 := result.Ipv4Address >> 8 & 0xff
-	amt_part4 := result.Ipv4Address & 0xff
+	part1 := result.Ipv4Address >> 24 & 0xff
+	part2 := result.Ipv4Address >> 16 & 0xff
+	part3 := result.Ipv4Address >> 8 & 0xff
+	part4 := result.Ipv4Address & 0xff
 
-	os_part1 := result.OsIpv4Address >> 24 & 0xff
-	os_part2 := result.OsIpv4Address >> 16 & 0xff
-	os_part3 := result.OsIpv4Address >> 8 & 0xff
-	os_part4 := result.OsIpv4Address & 0xff
-
-	settings.IPAddress = strconv.Itoa(int(amt_part1)) + "." + strconv.Itoa(int(amt_part2)) + "." + strconv.Itoa(int(amt_part3)) + "." + strconv.Itoa(int(amt_part4))
-	settings.OsIPAddress = strconv.Itoa(int(os_part1)) + "." + strconv.Itoa(int(os_part2)) + "." + strconv.Itoa(int(os_part3)) + "." + strconv.Itoa(int(os_part4))
+	settings.IPAddress = strconv.Itoa(int(part1)) + "." + strconv.Itoa(int(part2)) + "." + strconv.Itoa(int(part3)) + "." + strconv.Itoa(int(part4))
 
 	macPart0 := fmt.Sprintf("%02x", int(result.MacAddress[0]))
 	macPart1 := fmt.Sprintf("%02x", int(result.MacAddress[1]))

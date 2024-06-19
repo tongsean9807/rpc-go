@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"net"
 	"rpc/pkg/heci"
 )
 
@@ -38,61 +37,6 @@ func NewCommand() Command {
 	return Command{
 		Heci: heci.NewDriver(),
 	}
-}
-
-func GetOSIPAddress(results []uint8) (uint32, error) {
-	interfaces, err := net.Interfaces()
-	if err != nil {
-		return 0, errors.New("fail")
-	}
-
-	zero_bytes := []byte{0, 0, 0, 0, 0, 0, 0}
-
-	if bytes.Equal([]byte(results), zero_bytes) {
-		return 0, nil
-	}
-
-	for _, iface := range interfaces {
-		if iface.Flags&net.FlagUp == 0 {
-			continue // interface down
-		}
-		if iface.Flags&net.FlagLoopback != 0 {
-			continue // loopback interface
-		}
-
-		hwaddr := iface.HardwareAddr
-
-		if bytes.Equal(hwaddr, []byte(results)) {
-			addrs, err := iface.Addrs()
-			if err != nil {
-				return 0, errors.New("fail")
-			}
-
-			for _, addr := range addrs {
-				var ip net.IP
-
-				switch v := addr.(type) {
-				case *net.IPNet:
-					ip = v.IP
-				case *net.IPAddr:
-					ip = v.IP
-				}
-
-				// Check if the IP address is not nil and is an IPv4 address
-				if ip == nil || ip.IsLoopback() {
-					continue
-				}
-				ip = ip.To4()
-				if ip == nil {
-					continue // not an ipv4 address
-				}
-
-				ip_in_bytes := []byte(ip)
-				return binary.BigEndian.Uint32(ip_in_bytes), nil
-			}
-		}
-	}
-	return 0, nil
 }
 
 func (pthi Command) Open(useLME bool) error {
@@ -447,11 +391,6 @@ func (pthi Command) GetLANInterfaceSettings(useWireless bool) (LANInterface GetL
 	binary.Read(buf2, binary.LittleEndian, &response.DhcpIpMode)
 	binary.Read(buf2, binary.LittleEndian, &response.LinkStatus)
 	binary.Read(buf2, binary.LittleEndian, &response.MacAddress)
-
-	response.OsIpv4Address, err = GetOSIPAddress(response.MacAddress[:])
-	if err != nil {
-		return response, err
-	}
 
 	return response, nil
 }
