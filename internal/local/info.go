@@ -39,7 +39,7 @@ func GetOSIPAddress(mac_addr string) (string, error) {
 	}
 	interfaces, err := net.Interfaces()
 	if err != nil {
-		return "Not Found", errors.New("Failed to get net interface")
+		return "0.0.0.0", errors.New("Failed to get net interface")
 	}
 
 	if bytes.Equal(mac_in_byte, make([]byte, 7)) {
@@ -56,7 +56,7 @@ func GetOSIPAddress(mac_addr string) (string, error) {
 		if bytes.Equal(hwaddr, mac_in_byte) {
 			addrs, err := iface.Addrs()
 			if err != nil {
-				return "Not Found", errors.New("Failed to get interface addresses")
+				return "0.0.0.0", errors.New("Failed to get interface addresses")
 			}
 
 			for _, addr := range addrs {
@@ -220,6 +220,9 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		}
 
 		wired_osIpAddress, err := GetOSIPAddress(wired.MACAddress)
+		if err != nil {
+			log.Error(err)
+		}
 		wired.OsIPAddress = wired_osIpAddress
 
 		dataStruct["wiredAdapter"] = wired
@@ -240,6 +243,9 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		}
 
 		wireless_osIpAddress, err := GetOSIPAddress(wireless.MACAddress)
+		if err != nil {
+			log.Error(err)
+		}
 		wireless.OsIPAddress = wireless_osIpAddress
 
 		dataStruct["wirelessAdapter"] = wireless
